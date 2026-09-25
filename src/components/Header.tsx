@@ -18,6 +18,7 @@ import {
 import { BusinessProfile, UserRole, UserAccount } from '../types';
 import { PWAInstallButton } from './PWAInstallButton';
 import { useOnlineStatus } from '../hooks/useOnlineStatus';
+import { canAccessTab } from '../utils/permissions';
 
 export type AppTab = 'ledger' | 'debts' | 'reports' | 'invoices' | 'payroll' | 'suggestions' | 'receipts';
 
@@ -84,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Navigation Tabs (Desktop / Tablet) */}
           <nav className="hidden lg:flex items-center gap-1 bg-slate-100/90 p-1 rounded-xl text-xs font-bold text-slate-600">
-            <button
+            {canAccessTab(currentRole, 'ledger') && <button
               onClick={() => onSelectTab('ledger')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
                 activeTab === 'ledger'
@@ -93,8 +94,8 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Wallet className="w-3.5 h-3.5" /> Ledger
-            </button>
-            <button
+            </button>}
+            {canAccessTab(currentRole, 'debts') && <button
               onClick={() => onSelectTab('debts')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
                 activeTab === 'debts'
@@ -108,8 +109,8 @@ export const Header: React.FC<HeaderProps> = ({
                   {unpaidDebtsCount}
                 </span>
               )}
-            </button>
-            <button
+            </button>}
+            {canAccessTab(currentRole, 'reports') && <button
               onClick={() => onSelectTab('reports')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
                 activeTab === 'reports'
@@ -118,8 +119,8 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <BarChart3 className="w-3.5 h-3.5 text-teal-600" /> Simple Reports
-            </button>
-            <button
+            </button>}
+            {canAccessTab(currentRole, 'invoices') && <button
               onClick={() => onSelectTab('invoices')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
                 activeTab === 'invoices'
@@ -133,8 +134,8 @@ export const Header: React.FC<HeaderProps> = ({
                   {invoiceCount}
                 </span>
               )}
-            </button>
-            <button
+            </button>}
+            {canAccessTab(currentRole, 'payroll') && <button
               onClick={() => onSelectTab('payroll')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
                 activeTab === 'payroll'
@@ -143,8 +144,8 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <UserCheck className="w-3.5 h-3.5 text-indigo-600" /> Manage Staff
-            </button>
-            <button
+            </button>}
+            {canAccessTab(currentRole, 'suggestions') && <button
               onClick={() => onSelectTab('suggestions')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
                 activeTab === 'suggestions'
@@ -153,7 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Suggestions
-            </button>
+            </button>}
           </nav>
 
           {/* Right Action Icons */}
@@ -189,7 +190,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Quick Tour / Setup */}
             <button
               onClick={onOpenOnboarding}
-              className="hidden sm:flex items-center gap-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-2 text-xs font-bold transition"
+              className={`hidden sm:flex items-center gap-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-2 text-xs font-bold transition ${currentRole !== 'owner' ? 'hidden' : ''}`}
               title="Welcome Tour & Business Setup"
             >
               <Sparkles className="w-3.5 h-3.5 text-teal-600" />
@@ -224,7 +225,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Settings button */}
             <button
               onClick={onOpenSettings}
-              className="rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition"
+              className={`rounded-xl border border-slate-200 p-2 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition ${currentRole !== 'owner' ? 'hidden' : ''}`}
               title="Settings & Backup"
             >
               <Settings className="w-4 h-4" />
@@ -234,66 +235,24 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Mobile Navigation Tabs (scrollable) */}
         <div className="flex lg:hidden border-t border-slate-100 py-2 gap-1 overflow-x-auto text-[11px] font-bold scrollbar-none">
-          <button
-            onClick={() => onSelectTab('ledger')}
-            className={`px-2.5 py-1.5 rounded-lg whitespace-nowrap ${
-              activeTab === 'ledger'
-                ? 'bg-teal-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            Ledger
-          </button>
-          <button
-            onClick={() => onSelectTab('debts')}
-            className={`px-2.5 py-1.5 rounded-lg whitespace-nowrap flex items-center gap-1 ${
-              activeTab === 'debts'
-                ? 'bg-teal-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            Debts {unpaidDebtsCount > 0 && `(${unpaidDebtsCount})`}
-          </button>
-          <button
-            onClick={() => onSelectTab('reports')}
-            className={`px-2.5 py-1.5 rounded-lg whitespace-nowrap ${
-              activeTab === 'reports'
-                ? 'bg-teal-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            Reports
-          </button>
-          <button
-            onClick={() => onSelectTab('invoices')}
-            className={`px-2.5 py-1.5 rounded-lg whitespace-nowrap flex items-center gap-1 ${
-              activeTab === 'invoices'
-                ? 'bg-teal-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            Invoices & Receipts
-          </button>
-          <button
-            onClick={() => onSelectTab('payroll')}
-            className={`px-2.5 py-1.5 rounded-lg whitespace-nowrap ${
-              activeTab === 'payroll'
-                ? 'bg-teal-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            Staff
-          </button>
-          <button
-            onClick={() => onSelectTab('suggestions')}
-            className={`px-2.5 py-1.5 rounded-lg whitespace-nowrap flex items-center gap-1 ${
-              activeTab === 'suggestions'
-                ? 'bg-teal-600 text-white'
-                : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            Suggestions
-          </button>
+          {([
+            ['ledger', 'Ledger'],
+            ['debts', `Debts${unpaidDebtsCount > 0 ? ` (${unpaidDebtsCount})` : ''}`],
+            ['reports', 'Reports'],
+            ['invoices', 'Invoices & Receipts'],
+            ['payroll', 'Staff'],
+            ['suggestions', 'Suggestions'],
+          ] as [AppTab, string][]).filter(([tab]) => canAccessTab(currentRole, tab)).map(([tab, label]) => (
+            <button
+              key={tab}
+              onClick={() => onSelectTab(tab)}
+              className={`px-2.5 py-1.5 rounded-lg whitespace-nowrap ${
+                activeTab === tab ? 'bg-teal-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </div>
     </header>

@@ -26,6 +26,7 @@ import { calculateCashFlow, generateBudgetSuggestions } from './utils/budgetEngi
 import { auth, signInWithGoogle, logOutFromFirebase } from './firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { firebaseService } from './utils/firebaseService';
+import { canAccessTab, canRecordTransactions, canManageStaff, roleTabs } from './utils/permissions';
 import {
   Transaction,
   TeacherStaff,
@@ -76,6 +77,12 @@ export default function App() {
 
   // Tab navigation: 'ledger' | 'debts' | 'reports' | 'invoices' | 'payroll' | 'suggestions' | 'receipts'
   const [activeTab, setActiveTab] = useState<AppTab>('ledger');
+
+  useEffect(() => {
+    if (!canAccessTab(currentRole, activeTab)) {
+      setActiveTab(roleTabs[currentRole][0]);
+    }
+  }, [currentRole, activeTab]);
 
   // Modal States
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
@@ -205,6 +212,10 @@ export default function App() {
 
   // Handle saving transaction (from manual, scan, or suggestion)
   const handleSaveTransaction = async (tx: Transaction, receiptPhotoUrl?: string) => {
+    if (!canRecordTransactions(currentRole)) {
+      alert('Your role has read-only access to records.');
+      return;
+    }
     const activeUserId = firebaseUser?.uid || currentAccount.id;
     if (receiptPhotoUrl) {
       await storage.saveReceiptPhoto(tx.id, receiptPhotoUrl);
@@ -381,6 +392,10 @@ export default function App() {
 
   // Staff and Profile management
   const handleSaveStaffList = (newStaffList: TeacherStaff[]) => {
+    if (!canManageStaff(currentRole)) {
+      alert('Only owners and managers can manage staff.');
+      return;
+    }
     const activeUserId = firebaseUser?.uid || currentAccount.id;
     setStaffList(newStaffList);
     storage.saveStaff(newStaffList);
@@ -390,6 +405,10 @@ export default function App() {
   };
 
   const handleSaveProfile = (newProfile: BusinessProfile) => {
+    if (currentRole !== 'owner') {
+      alert('Only the owner can change business settings.');
+      return;
+    }
     const activeUserId = firebaseUser?.uid || currentAccount.id;
     setProfile(newProfile);
     storage.saveProfile(newProfile);
@@ -606,10 +625,16 @@ export default function App() {
       <Header
         profile={profile}
         activeTab={activeTab}
-        onSelectTab={setActiveTab}
+        onSelectTab={(tab) => {
+          if (canAccessTab(currentRole, tab)) setActiveTab(tab);
+        }}
         onOpenScanner={() => setIsScannerOpen(true)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenOnboarding={() => setIsOnboardingOpen(true)}
+        onOpenSettings={() => {
+          if (currentRole === 'owner') setIsSettingsOpen(true);
+        }}
+        onOpenOnboarding={() => {
+          if (currentRole === 'owner') setIsOnboardingOpen(true);
+        }}
         onOpenAccountModal={() => setIsAccountModalOpen(true)}
         onOpenLanding={() => setViewMode('landing')}
         currentAccount={currentAccount}
@@ -639,7 +664,7 @@ export default function App() {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* TAB 1: Ledger & Sales (Dashboard Overview + Transaction List) */}
-        {activeTab === 'ledger' && (
+        {activeTab === 'ledger' && canAccessTab(currentRole, 'ledger') && (
           <div className="space-y-6">
             <DashboardOverview
               summary={summary}
@@ -692,7 +717,7 @@ export default function App() {
         )}
 
           {/* TAB 2: Customer Debts ("Know who owes your business") */}
-          {activeTab === 'debts' && (
+          {activeTab === 'debts' && canAccessTab(currentRole, 'debts') && (
             <CustomerDebtsView
               invoices={invoices}
               profile={profile}
@@ -709,7 +734,7 @@ export default function App() {
           )}
 
           {/* TAB 3: Simple Reports ("Understand your business without difficult calculations") */}
-          {activeTab === 'reports' && (
+          {activeTab === 'reports' && canAccessTab(currentRole, 'reports') && (
             <SimpleReportsView
               transactions={transactions}
               invoices={invoices}
@@ -719,7 +744,7 @@ export default function App() {
           )}
 
           {/* TAB 4: Invoices & Receipts ("Send clear invoices. Give proper receipts.") */}
-          {activeTab === 'invoices' && (
+          {activeTab === 'invoices' && canAccessTab(currentRole, 'invoices') && (
             <InvoicesAndReceiptsView
               invoices={invoices}
               issuedReceipts={issuedReceipts}
@@ -745,7 +770,7 @@ export default function App() {
           )}
 
           {/* TAB 5: Manage Staff Records & Payroll ("Let your staff help without losing control") */}
-          {activeTab === 'payroll' && (
+          {activeTab === 'payroll' && canAccessTab(currentRole, 'payroll') && (
             <TeacherPayroll
               staffList={staffList}
               transactions={transactions}
@@ -758,7 +783,7 @@ export default function App() {
           )}
 
           {/* TAB 6: Smart Budget Suggestions */}
-          {activeTab === 'suggestions' && (
+          {activeTab === 'suggestions' && canAccessTab(currentRole, 'suggestions') && (
             <BudgetSuggestions
               suggestions={suggestions}
               summary={summary}
@@ -770,7 +795,7 @@ export default function App() {
           )}
 
           {/* TAB 7: Printable School Fee Vouchers */}
-          {activeTab === 'receipts' && (
+          {activeTab === 'receipts' && canAccessTab(currentRole, 'receipts') && (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl bg-white p-5 border border-slate-200">
                 <div>

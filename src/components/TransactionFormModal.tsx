@@ -26,6 +26,7 @@ import {
   ScannedReceiptData,
 } from '../types';
 import { getBusinessCopy } from '../utils/businessCopy';
+import { getCategoryOptions } from '../utils/categoryOptions';
 
 interface TransactionFormModalProps {
   isOpen: boolean;
@@ -51,6 +52,9 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
   editTransaction,
 }) => {
   const copy = getBusinessCopy(profile);
+  const categoryOptions = getCategoryOptions(profile, type);
+  const defaultIncomeCategory = getCategoryOptions(profile, 'income')[0].value;
+  const defaultExpenseCategory = getCategoryOptions(profile, 'expense')[0].value;
   const [type, setType] = useState<TransactionType>(initialType);
   const [amount, setAmount] = useState<string>('');
   const [title, setTitle] = useState<string>('');
@@ -83,7 +87,12 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
     } else if (initialScannedData) {
       setType('income');
       setAmount(initialScannedData.amount ? initialScannedData.amount.toString() : '');
-      setCategory(initialScannedData.category || 'tuition_fees');
+      setCategory(
+        initialScannedData.category &&
+          getCategoryOptions(profile, 'income').some((option) => option.value === initialScannedData.category)
+          ? initialScannedData.category
+          : defaultIncomeCategory
+      );
       setPaymentMethod(initialScannedData.paymentMethod || 'pos_agent');
       setPayerOrPayee(initialScannedData.payerName || '');
       setReferenceNumber(initialScannedData.receiptNumber || 'POS-' + Math.floor(100000 + Math.random() * 900000));
@@ -100,7 +109,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
     } else {
       setType(initialType);
       setAmount('');
-      setCategory(initialType === 'income' ? 'tuition_fees' : 'teacher_salaries');
+      setCategory(initialType === 'income' ? defaultIncomeCategory : defaultExpenseCategory);
       setPaymentMethod('cash');
       setPayerOrPayee('');
       setReferenceNumber('REC-' + Math.floor(1000 + Math.random() * 9000));
@@ -242,7 +251,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
               type="button"
               onClick={() => {
                 setType('income');
-                setCategory('tuition_fees');
+                setCategory(defaultIncomeCategory);
               }}
               className={`flex items-center justify-center gap-2 py-2.5 rounded-xl transition ${
                 type === 'income'
@@ -256,7 +265,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
               type="button"
               onClick={() => {
                 setType('expense');
-                setCategory('teacher_salaries');
+                setCategory(defaultExpenseCategory);
               }}
               className={`flex items-center justify-center gap-2 py-2.5 rounded-xl transition ${
                 type === 'expense'
@@ -379,30 +388,11 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
                 onChange={(e) => handleCategoryChange(e.target.value)}
                 className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-xs font-medium text-slate-800 focus:border-teal-500 focus:ring-2 focus:ring-teal-200 bg-white"
               >
-                {type === 'income' ? (
-                  <>
-                    <option value="tuition_fees">Tuition & Term Fees</option>
-                    <option value="registration_admission">Admission & Registration</option>
-                    <option value="books_uniforms">Books, Uniforms & Badges</option>
-                    <option value="pta_levy">PTA Levy / Development</option>
-                    <option value="exam_fees">Examination / Test Fees</option>
-                    <option value="lesson_extra">Extra-mural Lessons</option>
-                    <option value="donation_grant">Donations & Community Grants</option>
-                    <option value="other_income">Other Income</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="teacher_salaries">Teacher & Headmistress Salaries</option>
-                    <option value="support_staff_wages">Security & Support Wages</option>
-                    <option value="stationery_chalk">Classroom Chalk & Exam Stationery</option>
-                    <option value="fuel_electricity">Generator Fuel & Utilities</option>
-                    <option value="repairs_maintenance">Desk Repairs & Facility Maintenance</option>
-                    <option value="water_sanitation">Water Borehole & Sanitation</option>
-                    <option value="food_nutrition">Student Feeding & Refreshments</option>
-                    <option value="inspection_levies">Govt Levies & Inspection Dues</option>
-                    <option value="emergency_other">Emergency / Other Expense</option>
-                  </>
-                )}
+                {categoryOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
 
