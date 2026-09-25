@@ -1,4 +1,4 @@
-import { ScannedReceiptData, PaymentMethod, IncomeCategory } from '../types';
+import { ScannedReceiptData, IncomeCategory } from '../types';
 
 export function parseReceiptCode(rawCode: string): ScannedReceiptData {
   const trimmed = rawCode.trim();

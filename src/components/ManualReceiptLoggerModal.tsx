@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { BusinessProfile, Invoice, IssuedReceipt, Transaction, PaymentMethod, IncomeCategory } from '../types';
 import { getBusinessCopy } from '../utils/businessCopy';
+import { getCategoryOptions } from '../utils/categoryOptions';
 
 interface ManualReceiptLoggerModalProps {
   isOpen: boolean;
@@ -45,6 +46,7 @@ export const ManualReceiptLoggerModal: React.FC<ManualReceiptLoggerModalProps> =
   onSaveManualReceipt,
 }) => {
   const copy = getBusinessCopy(profile);
+  const categoryOptions = getCategoryOptions(profile, 'income');
   // Form fields
   const [txnNumber, setTxnNumber] = useState('');
   const [amount, setAmount] = useState('');
@@ -55,7 +57,9 @@ export const ManualReceiptLoggerModal: React.FC<ManualReceiptLoggerModalProps> =
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [time, setTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   const [description, setDescription] = useState('Payment / Sale');
-  const [category, setCategory] = useState<IncomeCategory>('general_sales');
+  const [category, setCategory] = useState<IncomeCategory>(
+    getCategoryOptions(profile, 'income')[0].value as IncomeCategory
+  );
   const [notes, setNotes] = useState('');
 
   // Invoice linking
@@ -388,14 +392,11 @@ export const ManualReceiptLoggerModal: React.FC<ManualReceiptLoggerModalProps> =
                 onChange={(e) => setCategory(e.target.value as IncomeCategory)}
                 className="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-semibold text-slate-800 focus:border-teal-600 outline-hidden"
               >
-                <option value="tuition_fees">Tuition / School Fees</option>
-                <option value="exam_fees">Exam & Registration Fees</option>
-                <option value="books_uniforms">Books & Uniforms</option>
-                <option value="registration_admission">Registration & Admission</option>
-                <option value="donation_grant">Donations & Support</option>
-                <option value="general_sales">General Commercial Sale</option>
-                <option value="service_fee">Service Fee</option>
-                <option value="other_income">Other Income</option>
+                {categoryOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>

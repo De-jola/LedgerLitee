@@ -253,31 +253,6 @@ export const AccountModal: React.FC<AccountModalProps> = ({
             </span>
           </div>
 
-          {/* Quick Role Switcher for active session */}
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-slate-700">
-              Active Session Permission:
-            </label>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              {(['owner', 'manager', 'cashier', 'viewer'] as UserRole[]).map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => onChangeRole(r)}
-                  className={`p-2 rounded-lg border text-left font-bold transition flex items-center justify-between ${
-                    currentAccount.role === r
-                      ? 'border-teal-600 bg-teal-50 text-teal-900 ring-1 ring-teal-600'
-                      : 'border-slate-200 hover:bg-slate-50 text-slate-700'
-                  }`}
-                >
-                  <span className="capitalize">{r}</span>
-                  {currentAccount.role === r && (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
 
           {/* Accounts List on this Device */}
           <div className="space-y-2 pt-2 border-t border-slate-100">

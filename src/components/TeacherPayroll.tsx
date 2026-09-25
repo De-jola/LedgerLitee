@@ -193,7 +193,7 @@ export const TeacherPayroll: React.FC<TeacherPayrollProps> = ({
         </div>
       </div>
 
-      {/* Role Permission Legend & Simulator */}
+      {/* Role Permission Legend */}
       <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2">
@@ -203,20 +203,6 @@ export const TeacherPayroll: React.FC<TeacherPayrollProps> = ({
             </span>
           </div>
 
-          {/* Active Role Selector for Testing */}
-          <div className="flex items-center gap-1.5 text-xs">
-            <span className="text-slate-500 font-medium">Logged in role:</span>
-            <select
-              value={currentRole}
-              onChange={(e) => onChangeActiveRole(e.target.value as UserRole)}
-              className="bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-bold text-teal-900 focus:outline-hidden focus:border-teal-500 shadow-2xs"
-            >
-              <option value="owner">Owner (Full Access)</option>
-              <option value="manager">Manager (Records & Staff)</option>
-              <option value="cashier">Cashier (Sales & Receipts)</option>
-              <option value="viewer">Viewer (Read-only)</option>
-            </select>
-          </div>
         </div>
 
         {/* 4 Defined Roles */}
