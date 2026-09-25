@@ -18,6 +18,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { IssuedReceipt, InvoiceItem, BusinessProfile, PaymentMethod, Invoice } from '../types';
+import { getBusinessCopy } from '../utils/businessCopy';
 
 interface ReceiptIssueModalProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ export const ReceiptIssueModal: React.FC<ReceiptIssueModalProps> = ({
   onSaveReceipt,
 }) => {
   const sym = profile.currencySymbol || '₦';
+  const copy = getBusinessCopy(profile);
 
   const [receiptNumber, setReceiptNumber] = useState(`REC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string>('');
@@ -44,12 +46,12 @@ export const ReceiptIssueModal: React.FC<ReceiptIssueModalProps> = ({
   const [time, setTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
-  const [description, setDescription] = useState('Payment for Term 1 Tuition & Fees');
+  const [description, setDescription] = useState(copy.receiptTitle);
   const [amountPaid, setAmountPaid] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
   const [posAgentName, setPosAgentName] = useState(profile.defaultPosAgent || '');
   const [balanceRemaining, setBalanceRemaining] = useState<number>(0);
-  const [issuedBy, setIssuedBy] = useState('School Bursar Desk');
+  const [issuedBy, setIssuedBy] = useState(`${profile.businessName || 'Business'} Desk`);
   const [notes, setNotes] = useState('Official payment receipt issued. Preserved in offline ledger.');
   const [linkToLedger, setLinkToLedger] = useState(true);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
@@ -57,7 +59,7 @@ export const ReceiptIssueModal: React.FC<ReceiptIssueModalProps> = ({
 
   // Line items (optional breakdown)
   const [items, setItems] = useState<InvoiceItem[]>([
-    { id: '1', description: 'School Fees Payment', quantity: 1, unitPrice: 35000, amount: 35000 },
+    { id: '1', description: copy.receiptTitle, quantity: 1, unitPrice: 0, amount: 0 },
   ]);
 
   // Synchronize when modal opens or initialInvoice changes
@@ -69,17 +71,17 @@ export const ReceiptIssueModal: React.FC<ReceiptIssueModalProps> = ({
       setDescription(`Payment for Invoice #${initialInvoice.invoiceNumber}`);
       setAmountPaid(initialInvoice.balanceDue > 0 ? initialInvoice.balanceDue.toString() : initialInvoice.total.toString());
       setBalanceRemaining(0);
-      setItems(initialInvoice.items.length > 0 ? [...initialInvoice.items] : [{ id: '1', description: 'School Fees Payment', quantity: 1, unitPrice: initialInvoice.total, amount: initialInvoice.total }]);
+      setItems(initialInvoice.items.length > 0 ? [...initialInvoice.items] : [{ id: '1', description: copy.receiptTitle, quantity: 1, unitPrice: initialInvoice.total, amount: initialInvoice.total }]);
       setReceiptNumber(`REC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`);
     } else {
       setSelectedInvoiceId('');
       setCustomerName('');
       setCustomerPhone('');
-      setDescription('Term 1 School Fees Payment');
+      setDescription(copy.receiptTitle);
       setAmountPaid('');
       setBalanceRemaining(0);
       setReceiptNumber(`REC-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`);
-      setItems([{ id: '1', description: 'Tuition / Service Fee', quantity: 1, unitPrice: 0, amount: 0 }]);
+      setItems([{ id: '1', description: copy.receiptTitle, quantity: 1, unitPrice: 0, amount: 0 }]);
     }
     setDate(new Date().toISOString().split('T')[0]);
     setTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
@@ -141,7 +143,7 @@ export const ReceiptIssueModal: React.FC<ReceiptIssueModalProps> = ({
       return;
     }
     if (!customerName.trim()) {
-      alert('Please enter the customer / student name.');
+      alert(`Please enter the ${copy.customerLabel.toLowerCase()} name.`);
       return;
     }
 
@@ -264,7 +266,7 @@ export const ReceiptIssueModal: React.FC<ReceiptIssueModalProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Received From (Customer / Student / Parent) <span className="text-rose-500">*</span>
+                  Received From ({copy.customerLabel}) <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -333,7 +335,7 @@ export const ReceiptIssueModal: React.FC<ReceiptIssueModalProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Issued By (Bursar / Cashier Desk)
+                  Issued By (Business / Cashier Desk)
                 </label>
                 <input
                   type="text"
@@ -449,7 +451,7 @@ export const ReceiptIssueModal: React.FC<ReceiptIssueModalProps> = ({
             <div className="space-y-0.5">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                Automatically update school cash ledger & cash flow
+                Automatically update business cash ledger & cash flow
               </span>
               <p className="text-[11px] text-slate-500">
                 Logs this amount as verified income in your main cash flow records immediately.

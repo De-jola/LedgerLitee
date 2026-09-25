@@ -11,6 +11,8 @@ export function getBusinessCopy(profile: Pick<BusinessProfile, 'businessType'>) 
         staffLabel: 'Teachers & Staff',
         payerPlaceholder: 'e.g. Student or parent name',
         incomeTitle: 'School Fee Payment',
+        invoiceItem: 'School fees or learning service',
+        receiptTitle: 'Payment received for school services',
       };
     case 'shop':
       return {
@@ -21,6 +23,8 @@ export function getBusinessCopy(profile: Pick<BusinessProfile, 'businessType'>) 
         staffLabel: 'Shop Staff',
         payerPlaceholder: 'e.g. Customer name or walk-in sale',
         incomeTitle: 'Shop Sale',
+        invoiceItem: 'Product or shop item',
+        receiptTitle: 'Payment received for goods',
       };
     case 'services':
       return {
@@ -31,6 +35,8 @@ export function getBusinessCopy(profile: Pick<BusinessProfile, 'businessType'>) 
         staffLabel: 'Team Members',
         payerPlaceholder: 'e.g. Client name',
         incomeTitle: 'Service Payment',
+        invoiceItem: 'Professional service',
+        receiptTitle: 'Payment received for services',
       };
     default:
       return {
@@ -41,6 +47,8 @@ export function getBusinessCopy(profile: Pick<BusinessProfile, 'businessType'>) 
         staffLabel: 'Staff',
         payerPlaceholder: 'e.g. Customer or payer name',
         incomeTitle: 'Business Income',
+        invoiceItem: 'Product or service',
+        receiptTitle: 'Payment received',
       };
   }
 }

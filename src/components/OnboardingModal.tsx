@@ -123,6 +123,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
       communityLocation: communityLocation.trim() || 'Community Town',
       currency,
       currencySymbol: currencySymbols[currency] || '₦',
+      openingCash: Math.max(0, parseFloat(startingCash) || 0),
     };
     onSaveProfile(updatedProfile);
 

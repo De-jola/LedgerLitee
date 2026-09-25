@@ -20,6 +20,7 @@ const DEFAULT_PROFILE: BusinessProfile = {
   phone: '',
   email: '',
   bankAccountDetails: '',
+  openingCash: 0,
 };
 
 const DEFAULT_ACCOUNT: UserAccount = {

@@ -88,6 +88,14 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
       .reduce((sum, i) => sum + i.balanceDue, 0);
   }, [invoices]);
 
+  const currentCashBalance = useMemo(() => {
+    const movement = transactions.reduce(
+      (balance, transaction) => balance + (transaction.type === 'income' ? transaction.amount : -transaction.amount),
+      0
+    );
+    return (profile.openingCash || 0) + movement;
+  }, [profile.openingCash, transactions]);
+
   // Empty dashboard state check
   const isDashboardEmpty = transactions.length === 0;
 
@@ -302,7 +310,25 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           </div>
         </div>
 
-        {/* 4. Customers owing you */}
+        {/* 4. Cash balance */}
+        <div className="rounded-2xl border border-teal-200 bg-teal-50/40 p-4 shadow-xs">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-teal-900 uppercase tracking-wider">
+              Cash balance
+            </span>
+            <div className="rounded-xl bg-teal-100 p-2 text-teal-800">
+              <Banknote className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2 text-2xl font-black text-teal-950">
+            {sym}{currentCashBalance.toLocaleString()}
+          </div>
+          <div className="mt-3 flex items-center justify-between text-[11px] text-teal-800 border-t border-teal-100 pt-2">
+            <span>Opening cash plus recorded movement</span>
+          </div>
+        </div>
+
+        {/* 5. Customers owing you */}
         <div
           onClick={() => onSwitchTab('debts')}
           className="rounded-2xl border border-amber-200 bg-amber-50/40 p-4 shadow-xs hover:shadow-sm cursor-pointer transition"

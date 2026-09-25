@@ -17,6 +17,7 @@ import {
   Percent,
 } from 'lucide-react';
 import { Invoice, InvoiceItem, BusinessProfile } from '../types';
+import { getBusinessCopy } from '../utils/businessCopy';
 
 interface InvoiceGeneratorModalProps {
   isOpen: boolean;
@@ -34,6 +35,7 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
   editInvoice,
 }) => {
   const sym = profile.currencySymbol || '₦';
+  const copy = getBusinessCopy(profile);
 
   const [invoiceNumber, setInvoiceNumber] = useState(`INV-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -46,16 +48,15 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
   const [discount, setDiscount] = useState<number>(0);
-  const [notes, setNotes] = useState('Payment is required before term exam week. Thank you for partnering in your child’s educational future.');
+  const [notes, setNotes] = useState(`Payment is required according to the agreed terms. Thank you for choosing ${profile.businessName || 'our business'}.`);
   const [paymentInstructions, setPaymentInstructions] = useState(
     profile.bankAccountDetails
-      ? `Pay via cash at bursary or transfer to: ${profile.bankAccountDetails}. Present POS agent slip or transfer receipt for clearance.`
-      : 'Pay cash to the school bursar or via verified POS agent.'
+      ? `Pay by cash or transfer to: ${profile.bankAccountDetails}.`
+      : 'Pay by cash, transfer, or another agreed method.'
   );
 
   const [items, setItems] = useState<InvoiceItem[]>([
-    { id: '1', description: 'Term 1 Tuition & Learning Assessment', quantity: 1, unitPrice: 35000, amount: 35000 },
-    { id: '2', description: 'PTA & School Infrastructure Levy', quantity: 1, unitPrice: 3000, amount: 3000 },
+    { id: '1', description: 'Product or service', quantity: 1, unitPrice: 0, amount: 0 },
   ]);
 
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
@@ -85,14 +86,13 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
       setCustomerAddress('');
       setDiscount(0);
       setItems([
-        { id: '1', description: 'First Term Tuition & Continuous Assessment', quantity: 1, unitPrice: 35000, amount: 35000 },
-        { id: '2', description: 'PTA Development Levy', quantity: 1, unitPrice: 3000, amount: 3000 },
+        { id: '1', description: copy.invoiceItem, quantity: 1, unitPrice: 0, amount: 0 },
       ]);
-      setNotes('Payment is required before term exam week. Thank you for partnering in your child’s educational future.');
+      setNotes(`Payment is required according to the agreed terms. Thank you for choosing ${profile.businessName || 'our business'}.`);
       setPaymentInstructions(
         profile.bankAccountDetails
-          ? `Pay via cash at bursary or transfer to: ${profile.bankAccountDetails}. Present POS agent slip or transfer receipt for clearance.`
-          : 'Pay cash to the school bursar or via verified POS agent.'
+          ? `Pay by cash or transfer to: ${profile.bankAccountDetails}.`
+          : 'Pay by cash, transfer, or another agreed method.'
       );
     }
   }, [isOpen, editInvoice, profile]);
@@ -154,9 +154,11 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
     setItems(items.filter((_, i) => i !== index));
   };
 
-  // Quick preset templates for school/small business
+  // Quick templates are tailored to the registered business type.
   const handleApplyPreset = (type: 'tuition' | 'admission' | 'books' | 'uniform') => {
-    if (type === 'tuition') {
+    if (profile.businessType !== 'school') {
+      setItems([{ id: '1', description: copy.invoiceItem, quantity: 1, unitPrice: 0, amount: 0 }]);
+    } else if (type === 'tuition') {
       setItems([
         { id: '1', description: 'First Term Tuition & Examination Fee', quantity: 1, unitPrice: 35000, amount: 35000 },
         { id: '2', description: 'PTA & Infrastructure Levy', quantity: 1, unitPrice: 3000, amount: 3000 },
@@ -184,7 +186,7 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customerName.trim()) {
-      alert('Please enter a customer or student/parent name.');
+      alert(`Please enter the ${copy.customerLabel.toLowerCase()} name.`);
       return;
     }
     if (items.length === 0 || total <= 0) {
@@ -253,7 +255,7 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
                 {editInvoice ? 'Edit Customer Invoice' : 'Create & Generate Customer Invoice'}
               </h2>
               <p className="text-xs text-teal-200">
-                Official billing statement for school fees, products, or services
+                Official billing statement for {copy.customerLabel.toLowerCase()}s, products, or services
               </p>
             </div>
           </div>
@@ -282,34 +284,18 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
             <span className="font-bold text-teal-900 flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Quick Templates:
             </span>
-            <button
-              type="button"
-              onClick={() => handleApplyPreset('tuition')}
-              className="px-2.5 py-1 rounded-lg bg-white border border-teal-300 text-teal-800 hover:bg-teal-100 font-semibold transition"
-            >
-              Term Tuition Package
-            </button>
-            <button
-              type="button"
-              onClick={() => handleApplyPreset('admission')}
-              className="px-2.5 py-1 rounded-lg bg-white border border-teal-300 text-teal-800 hover:bg-teal-100 font-semibold transition"
-            >
-              New Admission Fee
-            </button>
-            <button
-              type="button"
-              onClick={() => handleApplyPreset('books')}
-              className="px-2.5 py-1 rounded-lg bg-white border border-teal-300 text-teal-800 hover:bg-teal-100 font-semibold transition"
-            >
-              Books & Stationery
-            </button>
-            <button
-              type="button"
-              onClick={() => handleApplyPreset('uniform')}
-              className="px-2.5 py-1 rounded-lg bg-white border border-teal-300 text-teal-800 hover:bg-teal-100 font-semibold transition"
-            >
-              Uniform & Sports Set
-            </button>
+            {profile.businessType === 'school' ? (
+              <>
+                <button type="button" onClick={() => handleApplyPreset('tuition')} className="px-2.5 py-1 rounded-lg bg-white border border-teal-300 text-teal-800 hover:bg-teal-100 font-semibold transition">Term Tuition Package</button>
+                <button type="button" onClick={() => handleApplyPreset('admission')} className="px-2.5 py-1 rounded-lg bg-white border border-teal-300 text-teal-800 hover:bg-teal-100 font-semibold transition">New Admission Fee</button>
+                <button type="button" onClick={() => handleApplyPreset('books')} className="px-2.5 py-1 rounded-lg bg-white border border-teal-300 text-teal-800 hover:bg-teal-100 font-semibold transition">Books & Stationery</button>
+                <button type="button" onClick={() => handleApplyPreset('uniform')} className="px-2.5 py-1 rounded-lg bg-white border border-teal-300 text-teal-800 hover:bg-teal-100 font-semibold transition">Uniform & Sports Set</button>
+              </>
+            ) : (
+              <button type="button" onClick={() => handleApplyPreset('tuition')} className="px-2.5 py-1 rounded-lg bg-white border border-teal-300 text-teal-800 hover:bg-teal-100 font-semibold transition">
+                Add {copy.invoiceItem}
+              </button>
+            )}
           </div>
 
           {/* Invoice Document Header Information */}
@@ -386,12 +372,12 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
           {/* Customer / Student Bill-To Details */}
           <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-3">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-              <User className="w-3.5 h-3.5 text-teal-600" /> Billed To (Customer / Student / Parent)
+              <User className="w-3.5 h-3.5 text-teal-600" /> Billed To ({copy.customerLabel})
             </span>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Customer / Parent Name <span className="text-rose-500">*</span>
+                  {copy.customerLabel} Name <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -465,7 +451,7 @@ export const InvoiceGeneratorModal: React.FC<InvoiceGeneratorModalProps> = ({
                         <input
                           type="text"
                           required
-                          placeholder="e.g. First Term Tuition Fee"
+                          placeholder={`e.g. ${copy.invoiceItem}`}
                           value={item.description}
                           onChange={(e) => handleItemChange(index, 'description', e.target.value)}
                           className="w-full rounded-lg border border-slate-200 py-1 px-2 text-xs text-slate-800 focus:border-teal-500"
