@@ -19,6 +19,7 @@ import {
   Hash,
 } from 'lucide-react';
 import { Invoice, IssuedReceipt, BusinessProfile } from '../types';
+import { getBusinessCopy } from '../utils/businessCopy';
 
 interface InvoicesAndReceiptsViewProps {
   invoices: Invoice[];
@@ -52,6 +53,7 @@ export const InvoicesAndReceiptsView: React.FC<InvoicesAndReceiptsViewProps> = (
   const [statusFilter, setStatusFilter] = useState<'all' | 'unpaid' | 'partially_paid' | 'paid'>('all');
 
   const sym = profile.currencySymbol || '₦';
+  const copy = getBusinessCopy(profile);
 
   // Filter Invoices
   const filteredInvoices = useMemo(() => {
@@ -101,7 +103,7 @@ export const InvoicesAndReceiptsView: React.FC<InvoicesAndReceiptsViewProps> = (
                 Customer Invoices & Payment Receipts
               </h2>
               <p className="text-xs text-slate-500">
-                Issue professional bills to parents & customers, then generate official payment receipts with QR verification codes.
+                Create professional invoices and payment receipts for your customers, with QR verification codes.
               </p>
             </div>
           </div>
@@ -158,7 +160,7 @@ export const InvoicesAndReceiptsView: React.FC<InvoicesAndReceiptsViewProps> = (
             {sym}{totalOutstanding.toLocaleString()}
           </div>
           <span className="text-[11px] text-slate-400 mt-0.5 block">
-            Awaiting parent fee settlements
+            Awaiting customer settlements
           </span>
         </div>
 
@@ -267,7 +269,7 @@ export const InvoicesAndReceiptsView: React.FC<InvoicesAndReceiptsViewProps> = (
               <FileText className="w-10 h-10 text-slate-300 mx-auto mb-2" />
               <p className="font-bold text-slate-700">No invoices found</p>
               <p className="text-xs text-slate-400 mt-1">
-                Create an invoice to bill students or customers with customized line items.
+                Create an invoice for {copy.customerLabel.toLowerCase()}s with customized line items.
               </p>
               <button
                 onClick={onCreateInvoice}
@@ -389,7 +391,7 @@ export const InvoicesAndReceiptsView: React.FC<InvoicesAndReceiptsViewProps> = (
               <Receipt className="w-10 h-10 text-slate-300 mx-auto mb-2" />
               <p className="font-bold text-slate-700">No payment receipts issued yet</p>
               <p className="text-xs text-slate-400 mt-1">
-                Issue a receipt whenever a parent makes a payment in cash or brings a POS agent slip.
+                Issue a receipt whenever a customer pays in cash, by transfer, or through a POS agent.
               </p>
               <button
                 onClick={() => onIssueReceipt()}

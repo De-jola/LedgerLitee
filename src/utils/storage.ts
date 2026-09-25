@@ -177,6 +177,14 @@ export const storage = {
     }
   },
 
+  setLoggedOut(value: boolean) {
+    localStorage.setItem('ledgerlite_logged_out', value ? 'true' : 'false');
+  },
+
+  isLoggedOut(): boolean {
+    return localStorage.getItem('ledgerlite_logged_out') === 'true';
+  },
+
   isOnboarded(): boolean {
     return localStorage.getItem('ledgerlite_onboarded') === 'true';
   },

@@ -12,7 +12,6 @@ import {
   Building2,
   Users,
   RefreshCw,
-  Trash2,
   Sparkles,
 } from 'lucide-react';
 import { UserAccount, UserRole } from '../types';
@@ -28,8 +27,8 @@ interface AccountModalProps {
   firebaseUser?: { email?: string | null; displayName?: string | null; photoURL?: string | null } | null;
   onGoogleSignIn?: () => Promise<void>;
   onGoogleSignOut?: () => Promise<void>;
+  onLogout?: () => Promise<void>;
   onSyncToCloud?: () => Promise<void>;
-  onClearDemoData?: () => void;
   isSyncing?: boolean;
 }
 
@@ -44,8 +43,8 @@ export const AccountModal: React.FC<AccountModalProps> = ({
   firebaseUser,
   onGoogleSignIn,
   onGoogleSignOut,
+  onLogout,
   onSyncToCloud,
-  onClearDemoData,
   isSyncing = false,
 }) => {
   const [pinInput, setPinInput] = useState('');
@@ -198,7 +197,18 @@ export const AccountModal: React.FC<AccountModalProps> = ({
               )}
             </div>
 
-            {/* Cloud Sync & Clear Demo buttons */}
+            {onLogout && (
+              <button
+                type="button"
+                onClick={onLogout}
+                className="w-full flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-bold text-rose-700 hover:bg-rose-100 transition"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Log out of this device
+              </button>
+            )}
+
+            {/* Cloud Sync */}
             <div className="pt-2 flex flex-wrap items-center gap-2">
               <button
                 type="button"
@@ -210,17 +220,6 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                 <span>{isSyncing ? 'Syncing...' : 'Sync Local to Cloud'}</span>
               </button>
 
-              {onClearDemoData && (
-                <button
-                  type="button"
-                  onClick={onClearDemoData}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 hover:border-rose-300 text-slate-700 hover:text-rose-700 font-bold text-xs transition"
-                  title="Clear dummy demo records and start with your real business data"
-                >
-                  <Trash2 className="w-3.5 h-3.5 text-rose-500" />
-                  <span>Start Fresh (Real Data)</span>
-                </button>
-              )}
             </div>
 
             {syncSuccess && (

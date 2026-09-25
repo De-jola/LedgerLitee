@@ -5,8 +5,6 @@ import {
   DollarSign,
   Download,
   Upload,
-  RefreshCw,
-  Trash2,
   CheckCircle,
   Shield,
   HelpCircle,
@@ -27,7 +25,6 @@ interface SettingsModalProps {
   onSaveProfile: (profile: BusinessProfile) => void;
   onExportBackup: () => void;
   onRestoreBackup: (importedData: any) => void;
-  onResetData: () => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -41,7 +38,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onSaveProfile,
   onExportBackup,
   onRestoreBackup,
-  onResetData,
 }) => {
   const [businessName, setBusinessName] = useState(profile.businessName);
   const [ownerName, setOwnerName] = useState(profile.ownerName || '');
@@ -106,7 +102,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <div className="flex items-center justify-between border-b border-slate-100 bg-slate-900 text-white px-5 py-4">
           <div className="flex items-center gap-2">
             <Building className="w-5 h-5 text-teal-400" />
-            <h2 className="text-base font-bold">School & Invoice Settings</h2>
+            <h2 className="text-base font-bold">Business & Invoice Settings</h2>
           </div>
           <button
             onClick={onClose}
@@ -126,7 +122,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  School / Business Name
+                  Business Name
                 </label>
                 <input
                   type="text"
@@ -219,7 +215,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="bursar@school.edu"
+                  placeholder="business@example.com"
                   className="w-full rounded-xl border border-slate-300 py-2 px-3 text-xs text-slate-800 focus:border-teal-500"
                 />
               </div>
@@ -237,7 +233,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 className="w-full rounded-xl border border-slate-300 py-2 px-3 text-xs text-slate-800 focus:border-teal-500"
               />
               <p className="text-[11px] text-slate-400 mt-1">
-                Printed on customer invoices as payment instructions for parents.
+                Printed on customer invoices as payment instructions for your customers.
               </p>
             </div>
 
@@ -357,20 +353,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </label>
             </div>
 
-            <div className="pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirm('Reset to standard sample school demo data including sample invoices and receipts?')) {
-                    onResetData();
-                    onClose();
-                  }
-                }}
-                className="text-xs text-slate-500 hover:text-slate-800 underline flex items-center gap-1"
-              >
-                <RefreshCw className="w-3 h-3" /> Reset to standard demo data
-              </button>
-            </div>
           </div>
 
           {/* Footer Submit */}
