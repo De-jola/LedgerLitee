@@ -71,7 +71,7 @@ export default function App() {
 
   // Top-level View: 'landing' (dedicated public landing page) vs 'dashboard' (business financial tools)
   const [viewMode, setViewMode] = useState<'dashboard' | 'landing'>(
-    storage.isOnboarded() ? 'dashboard' : 'landing'
+    storage.isOnboarded() && !storage.isLoggedOut() ? 'dashboard' : 'landing'
   );
 
   // Tab navigation: 'ledger' | 'debts' | 'reports' | 'invoices' | 'payroll' | 'suggestions' | 'receipts'
@@ -437,24 +437,17 @@ export default function App() {
     }
   };
 
-  // Start Fresh with Real Data (Wipes demo school data for publishing)
-  const handleClearDemoData = async () => {
-    if (
-      window.confirm(
-        'Clear sample demo records to start fresh with your real business data? This will clear mock records so you can start logging your real transactions.'
-      )
-    ) {
-      await storage.clearAllRecords();
-      setTransactions([]);
-      setInvoices([]);
-      setIssuedReceipts([]);
-      setIsAccountModalOpen(false);
-      setIsSettingsOpen(true);
-    }
+  const handleLogout = async () => {
+    await logOutFromFirebase();
+    storage.setLoggedOut(true);
+    setFirebaseUser(null);
+    setIsAccountModalOpen(false);
+    setViewMode('landing');
   };
 
   const handleSaveAccount = (account: UserAccount) => {
     storage.saveAccount(account);
+    storage.setLoggedOut(false);
     storage.setOnboarded(true);
     setCurrentAccount(account);
     setCurrentRole(account.role);
@@ -463,6 +456,7 @@ export default function App() {
 
   const handleSelectAccount = (account: UserAccount) => {
     storage.setCurrentAccount(account);
+    storage.setLoggedOut(false);
     setCurrentAccount(account);
     setCurrentRole(account.role);
   };
@@ -519,16 +513,6 @@ export default function App() {
       createdAt: Date.now(),
     };
     handleSaveTransaction(tx);
-  };
-
-  const handleResetData = async () => {
-    await storage.clearAllRecords();
-    setTransactions([]);
-    setInvoices([]);
-    setIssuedReceipts([]);
-    setStaffList([]);
-    const cleanProfile = storage.getProfile();
-    setProfile(cleanProfile);
   };
 
   const handleRestoreBackup = (imported: any) => {
@@ -887,7 +871,7 @@ export default function App() {
         onGoogleSignIn={handleGoogleSignIn}
         onGoogleSignOut={handleGoogleSignOut}
         onSyncToCloud={handleSyncToCloud}
-        onClearDemoData={handleClearDemoData}
+        onLogout={handleLogout}
         isSyncing={isSyncing}
       />
 
@@ -999,7 +983,6 @@ export default function App() {
           storage.exportBackupJSON(transactions, staffList, profile, invoices, issuedReceipts)
         }
         onRestoreBackup={handleRestoreBackup}
-        onResetData={handleResetData}
       />
     </div>
   );

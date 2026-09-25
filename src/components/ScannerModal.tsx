@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
-import { Camera, Upload, X, AlertCircle, Sparkles, CheckCircle2, Image as ImageIcon, Zap } from 'lucide-react';
-import { parseReceiptCode, SAMPLE_RECEIPTS } from '../utils/scannerParser';
-import { ScannedReceiptData, PaymentMethod } from '../types';
+import { Camera, Upload, X, AlertCircle, CheckCircle2, Image as ImageIcon, Zap } from 'lucide-react';
+import { parseReceiptCode } from '../utils/scannerParser';
+import { ScannedReceiptData } from '../types';
 
 interface ScannerModalProps {
   isOpen: boolean;
@@ -11,11 +11,10 @@ interface ScannerModalProps {
 }
 
 export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onScanComplete }) => {
-  const [activeTab, setActiveTab] = useState<'camera' | 'photo' | 'samples'>('camera');
+  const [activeTab, setActiveTab] = useState<'camera' | 'photo'>('camera');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [capturedPhotoUrl, setCapturedPhotoUrl] = useState<string | null>(null);
-  const [selectedSample, setSelectedSample] = useState<string | null>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const scannerContainerId = 'qr-reader-container';
 
@@ -142,17 +141,6 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onS
     reader.readAsDataURL(file);
   };
 
-  const handleApplySample = (sample: typeof SAMPLE_RECEIPTS[0]) => {
-    const parsed = parseReceiptCode(sample.qrPayload);
-    parsed.amount = sample.amount;
-    parsed.payerName = sample.studentName + ` (${sample.studentClass})`;
-    parsed.receiptNumber = sample.receiptNumber;
-    parsed.posAgentName = sample.posAgent;
-    parsed.paymentMethod = sample.paymentType;
-    parsed.notes = `${sample.purpose} - Scanned from sample receipt`;
-    onScanComplete(parsed);
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -181,7 +169,7 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onS
         </div>
 
         {/* Tab switch */}
-        <div className="grid grid-cols-3 border-b border-slate-200 bg-slate-50 text-xs font-semibold">
+        <div className="grid grid-cols-2 border-b border-slate-200 bg-slate-50 text-xs font-semibold">
           <button
             onClick={() => setActiveTab('camera')}
             className={`flex items-center justify-center gap-1.5 py-3 transition ${
@@ -204,19 +192,6 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onS
             }`}
           >
             <Upload className="w-4 h-4" /> Photo Archive
-          </button>
-          <button
-            onClick={() => {
-              stopCamera();
-              setActiveTab('samples');
-            }}
-            className={`flex items-center justify-center gap-1.5 py-3 transition ${
-              activeTab === 'samples'
-                ? 'border-b-2 border-teal-600 bg-white text-teal-800 font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <Sparkles className="w-4 h-4 text-amber-500" /> Test Slips
           </button>
         </div>
 
@@ -333,50 +308,6 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onS
             </div>
           )}
 
-          {activeTab === 'samples' && (
-            <div className="space-y-3">
-              <p className="text-xs text-slate-600">
-                Testing without a physical receipt? Click any sample school fee payment below to simulate scanning a receipt QR/barcode:
-              </p>
-
-              <div className="space-y-2.5">
-                {SAMPLE_RECEIPTS.map((sample) => (
-                  <div
-                    key={sample.id}
-                    onClick={() => handleApplySample(sample)}
-                    className="group flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs hover:border-teal-500 hover:bg-teal-50/40 transition cursor-pointer"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-900 group-hover:text-teal-900">
-                          {sample.studentName}
-                        </span>
-                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600">
-                          {sample.studentClass}
-                        </span>
-                        <span className="rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-semibold text-teal-800 uppercase">
-                          {sample.paymentType === 'pos_agent' ? 'POS Agent' : 'Cash'}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-500 mt-1">{sample.purpose}</p>
-                      <p className="text-[11px] text-slate-400 font-mono mt-0.5">
-                        Ref: {sample.receiptNumber} • {sample.posAgent}
-                      </p>
-                    </div>
-
-                    <div className="text-right shrink-0">
-                      <div className="text-sm font-extrabold text-teal-700">
-                        ₦{sample.amount.toLocaleString()}
-                      </div>
-                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-teal-600 mt-1 group-hover:underline">
-                        Scan Sample <Sparkles className="w-3 h-3 text-amber-500" />
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Footer */}

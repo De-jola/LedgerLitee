@@ -25,6 +25,7 @@ import {
   BusinessProfile,
   ScannedReceiptData,
 } from '../types';
+import { getBusinessCopy } from '../utils/businessCopy';
 
 interface TransactionFormModalProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
   profile,
   editTransaction,
 }) => {
+  const copy = getBusinessCopy(profile);
   const [type, setType] = useState<TransactionType>(initialType);
   const [amount, setAmount] = useState<string>('');
   const [title, setTitle] = useState<string>('');
@@ -88,8 +90,8 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
       setPosAgentName(initialScannedData.posAgentName || profile.defaultPosAgent || 'Moniepoint Agent');
       setTitle(
         initialScannedData.payerName
-          ? `School Fees - ${initialScannedData.payerName}`
-          : 'School Fee Payment'
+          ? `${copy.incomeTitle} - ${initialScannedData.payerName}`
+          : copy.incomeTitle
       );
       setNotes(initialScannedData.notes || 'Scanned from receipt barcode');
       setBarcodeOrQr(initialScannedData.rawPayload || '');
@@ -217,7 +219,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
                 {editTransaction
                   ? 'Edit Transaction Record'
                   : type === 'income'
-                  ? 'Log Income / School Fees'
+                  ? `Log ${copy.incomeLabel}`
                   : 'Log Business & Salary Expense'}
               </h2>
               <p className="text-xs text-white/80">
@@ -262,7 +264,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
                   : 'bg-white text-slate-700 hover:bg-slate-200'
               }`}
             >
-              <ArrowUpRight className="w-4 h-4" /> Expense / Teacher Payroll
+              <ArrowUpRight className="w-4 h-4" /> {copy.expenseLabel}
             </button>
           </div>
         )}
@@ -425,7 +427,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
             ) : (
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  {type === 'income' ? 'Student / Parent Name' : 'Recipient / Vendor'}
+                  {type === 'income' ? copy.customerLabel : 'Recipient / Vendor'}
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -449,7 +451,7 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
               </label>
               <input
                 type="text"
-                placeholder={type === 'income' ? 'e.g. Term 1 Tuition Fee' : 'e.g. 20L Generator Fuel'}
+                placeholder={type === 'income' ? `${copy.incomeTitle} or sale` : 'e.g. Stock, rent, or fuel'}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-xs text-slate-800 focus:border-teal-500 focus:ring-2 focus:ring-teal-200"

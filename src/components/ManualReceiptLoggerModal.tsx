@@ -19,6 +19,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { BusinessProfile, Invoice, IssuedReceipt, Transaction, PaymentMethod, IncomeCategory } from '../types';
+import { getBusinessCopy } from '../utils/businessCopy';
 
 interface ManualReceiptLoggerModalProps {
   isOpen: boolean;
@@ -43,6 +44,7 @@ export const ManualReceiptLoggerModal: React.FC<ManualReceiptLoggerModalProps> =
   existingReceipts,
   onSaveManualReceipt,
 }) => {
+  const copy = getBusinessCopy(profile);
   // Form fields
   const [txnNumber, setTxnNumber] = useState('');
   const [amount, setAmount] = useState('');
@@ -288,7 +290,7 @@ export const ManualReceiptLoggerModal: React.FC<ManualReceiptLoggerModalProps> =
 
             <div>
               <label className="block font-bold text-slate-700 mb-1">
-                Customer / Student Name <span className="text-rose-500">*</span>
+                {copy.customerLabel} Name <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
@@ -374,7 +376,7 @@ export const ManualReceiptLoggerModal: React.FC<ManualReceiptLoggerModalProps> =
                 required
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="e.g. 1st Term School Fees, Store Sales"
+                placeholder={`e.g. ${copy.incomeTitle}, product sale, or service`}
                 className="w-full px-3 py-2 rounded-xl border border-slate-300 font-semibold text-slate-800 focus:border-teal-600 outline-hidden"
               />
             </div>
