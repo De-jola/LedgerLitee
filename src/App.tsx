@@ -472,6 +472,7 @@ export default function App() {
     setCurrentAccount(account);
     setCurrentRole(account.role);
     setAccounts(storage.getAccounts());
+    setIsOnboardingOpen(false);
   };
 
   const handleSelectAccount = (account: UserAccount) => {

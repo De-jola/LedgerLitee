@@ -105,6 +105,7 @@ export interface BusinessProfile {
   phone?: string;
   email?: string;
   bankAccountDetails?: string; // e.g. "First Bank: 1234567890 | Grace Community Academy"
+  openingCash?: number;
 }
 
 export interface BudgetSuggestion {
