@@ -1,5 +1,6 @@
-import { AppTab } from '../components/Header';
 import { UserRole } from '../types';
+
+export type AppTab = 'ledger' | 'debts' | 'reports' | 'invoices' | 'payroll' | 'suggestions' | 'receipts';
 
 export const roleTabs: Record<UserRole, AppTab[]> = {
   owner: ['ledger', 'debts', 'reports', 'invoices', 'payroll', 'suggestions', 'receipts'],

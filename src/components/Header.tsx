@@ -4,23 +4,16 @@ import {
   Sparkles,
   Users,
   Settings,
-  PlusCircle,
-  FileCheck,
-  ShieldCheck,
   Wallet,
   FileText,
   BarChart3,
-  Receipt,
   UserCheck,
-  HelpCircle,
   Hash,
 } from 'lucide-react';
 import { BusinessProfile, UserRole, UserAccount } from '../types';
-import { PWAInstallButton } from './PWAInstallButton';
-import { useOnlineStatus } from '../hooks/useOnlineStatus';
-import { canAccessTab } from '../utils/permissions';
+import { AppTab, canAccessTab } from '../utils/permissions';
 
-export type AppTab = 'ledger' | 'debts' | 'reports' | 'invoices' | 'payroll' | 'suggestions' | 'receipts';
+export type { AppTab } from '../utils/permissions';
 
 interface HeaderProps {
   profile: BusinessProfile;
@@ -53,12 +46,10 @@ export const Header: React.FC<HeaderProps> = ({
   unpaidDebtsCount = 0,
   invoiceCount = 0,
 }) => {
-  const isOnline = useOnlineStatus();
-
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16 gap-3">
+        <div className="flex items-center justify-between min-h-16 py-2 gap-2 sm:gap-3">
           {/* Brand Logo & Name */}
           <div
             onClick={onOpenLanding}
@@ -68,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-700 to-teal-500 text-white flex items-center justify-center shadow-xs shrink-0 group-hover:scale-105 transition">
               <Wallet className="w-5 h-5 text-amber-300" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-base font-black tracking-tight text-slate-900 group-hover:text-teal-700 transition">
                   LedgerLite
@@ -162,7 +153,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Real Cloud Backend Status */}
             <button
               onClick={onOpenAccountModal}
-              className="hidden sm:flex items-center gap-1.5 rounded-xl border border-emerald-200/80 bg-emerald-50/70 hover:bg-emerald-100 px-2.5 py-1.5 text-xs font-bold text-emerald-900 transition shadow-2xs"
+              className="hidden sm:flex shrink-0 items-center gap-1.5 rounded-xl border border-emerald-200/80 bg-emerald-50/70 hover:bg-emerald-100 px-2.5 py-1.5 text-xs font-bold text-emerald-900 transition shadow-2xs"
               title="Real Cloud Firestore Database Connected (pocketly-1843c)"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -173,7 +164,7 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Active Account Pill / Switcher */}
             <button
               onClick={onOpenAccountModal}
-              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-2.5 py-1.5 text-xs font-bold transition shadow-2xs"
+              className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-2 py-1.5 text-xs font-bold transition shadow-2xs"
               title="Account & Security Access"
             >
               <div className="w-5 h-5 rounded-full bg-teal-700 text-white flex items-center justify-center text-[10px] font-black">
@@ -182,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="hidden md:inline text-slate-800 font-bold max-w-[90px] truncate">
                 {currentAccount?.fullName || profile.ownerName || 'Owner'}
               </span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-800 capitalize font-bold">
+              <span className="hidden sm:inline text-[10px] px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-800 capitalize font-bold">
                 {currentRole}
               </span>
             </button>
@@ -196,9 +187,6 @@ export const Header: React.FC<HeaderProps> = ({
               <Sparkles className="w-3.5 h-3.5 text-teal-600" />
               <span>Setup</span>
             </button>
-
-            {/* PWA Install Button */}
-            <PWAInstallButton />
 
             {/* Quick Log Receipt via Txn # */}
             {onOpenManualReceiptLogger && (
@@ -215,11 +203,11 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Quick Scanner Button */}
             <button
               onClick={onOpenScanner}
-              className="flex items-center gap-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold px-3 py-2 text-xs shadow-xs transition active:scale-95"
+              className="flex shrink-0 items-center gap-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold px-2.5 py-2 text-xs shadow-xs transition active:scale-95"
               title="Scan receipt QR or barcode"
             >
               <QrCode className="w-4 h-4 text-amber-300" />
-              <span className="hidden sm:inline">Scan Receipt</span>
+              <span className="hidden md:inline">Scan Receipt</span>
             </button>
 
             {/* Settings button */}
@@ -234,7 +222,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Mobile Navigation Tabs (scrollable) */}
-        <div className="flex lg:hidden border-t border-slate-100 py-2 gap-1 overflow-x-auto text-[11px] font-bold scrollbar-none">
+        <div className="flex lg:hidden min-w-0 border-t border-slate-100 py-2 gap-1 overflow-x-auto text-[11px] font-bold scrollbar-none">
           {([
             ['ledger', 'Ledger'],
             ['debts', `Debts${unpaidDebtsCount > 0 ? ` (${unpaidDebtsCount})` : ''}`],
