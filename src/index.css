@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@media print {
+  /* Print Optimization for LedgerLite Receipts & Invoices */
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 12pt;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide app navigation, modals overlays, toasts, and floating buttons during print */
+  header,
+  footer,
+  .print\:hidden,
+  button,
+  .fixed.bottom-5,
+  [data-no-print] {
+    display: none !important;
+  }
+
+  /* Normalize fixed modal backdrops during print */
+  .fixed.inset-0 {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+  }
+
+  .max-h-\[92vh\], .overflow-y-auto {
+    max-height: none !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  .shadow-2xl, .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm, .shadow-xs, .shadow-2xs {
+    box-shadow: none !important;
+  }
+
+  /* Printable sheet container */
+  .printable-card, .printable-document {
+    border: 1px solid #cbd5e1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}

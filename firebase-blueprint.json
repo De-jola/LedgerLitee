@@ -1,0 +1,168 @@
+{
+  "entities": {
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Financial income or expense transaction record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "amount": { "type": "number" },
+        "date": { "type": "string", "maxLength": 30 },
+        "time": { "type": "string", "maxLength": 20 },
+        "title": { "type": "string", "maxLength": 255 },
+        "category": { "type": "string", "maxLength": 100 },
+        "paymentMethod": { "type": "string", "enum": ["cash", "pos_agent", "bank_transfer", "other"] },
+        "payerOrPayee": { "type": "string", "maxLength": 255 },
+        "referenceNumber": { "type": "string", "maxLength": 100 },
+        "posAgentName": { "type": "string", "maxLength": 150 },
+        "notes": { "type": "string", "maxLength": 2000 },
+        "receiptPhotoUrl": { "type": "string", "maxLength": 500000 },
+        "barcodeOrQrCode": { "type": "string", "maxLength": 1000 },
+        "verified": { "type": "boolean" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "type", "amount", "date", "title", "paymentMethod", "payerOrPayee", "referenceNumber", "createdAt"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Customer invoice for goods, school fees, or services",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "invoiceNumber": { "type": "string", "maxLength": 100 },
+        "date": { "type": "string", "maxLength": 30 },
+        "dueDate": { "type": "string", "maxLength": 30 },
+        "customerName": { "type": "string", "maxLength": 255 },
+        "customerPhone": { "type": "string", "maxLength": 50 },
+        "customerAddress": { "type": "string", "maxLength": 255 },
+        "subtotal": { "type": "number" },
+        "discount": { "type": "number" },
+        "total": { "type": "number" },
+        "amountPaid": { "type": "number" },
+        "balanceDue": { "type": "number" },
+        "status": { "type": "string", "enum": ["unpaid", "paid", "partially_paid", "cancelled"] },
+        "notes": { "type": "string", "maxLength": 2000 },
+        "paymentInstructions": { "type": "string", "maxLength": 1000 },
+        "qrPayload": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["id", "invoiceNumber", "date", "dueDate", "customerName", "total", "amountPaid", "balanceDue", "status", "createdAt"]
+    },
+    "IssuedReceipt": {
+      "title": "IssuedReceipt",
+      "description": "Official receipt issued to a customer or parent upon payment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "receiptNumber": { "type": "string", "maxLength": 100 },
+        "invoiceId": { "type": "string", "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 30 },
+        "time": { "type": "string", "maxLength": 20 },
+        "customerName": { "type": "string", "maxLength": 255 },
+        "customerPhone": { "type": "string", "maxLength": 50 },
+        "description": { "type": "string", "maxLength": 500 },
+        "amountPaid": { "type": "number" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "pos_agent", "bank_transfer", "other"] },
+        "posAgentName": { "type": "string", "maxLength": 150 },
+        "balanceRemaining": { "type": "number" },
+        "issuedBy": { "type": "string", "maxLength": 100 },
+        "notes": { "type": "string", "maxLength": 2000 },
+        "qrPayload": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "receiptNumber", "date", "customerName", "description", "amountPaid", "paymentMethod", "createdAt"]
+    },
+    "BusinessProfile": {
+      "title": "BusinessProfile",
+      "description": "User business metadata, currency, and default payment settings",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "businessName": { "type": "string", "maxLength": 200 },
+        "ownerName": { "type": "string", "maxLength": 150 },
+        "businessType": { "type": "string", "enum": ["school", "shop", "services", "general"] },
+        "tagline": { "type": "string", "maxLength": 255 },
+        "communityLocation": { "type": "string", "maxLength": 200 },
+        "currency": { "type": "string", "maxLength": 10 },
+        "currencySymbol": { "type": "string", "maxLength": 10 },
+        "termOrPeriod": { "type": "string", "maxLength": 100 },
+        "defaultPosAgent": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "email": { "type": "string", "maxLength": 150 },
+        "bankAccountDetails": { "type": "string", "maxLength": 500 },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["businessName", "ownerName", "currency", "currencySymbol"]
+    },
+    "StaffMember": {
+      "title": "StaffMember",
+      "description": "Staff member or teacher for payroll tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150 },
+        "role": { "type": "string", "maxLength": 150 },
+        "roleType": { "type": "string", "enum": ["owner", "manager", "cashier", "viewer"] },
+        "monthlySalary": { "type": "number" },
+        "phone": { "type": "string", "maxLength": 50 },
+        "lastPaidDate": { "type": "string", "maxLength": 30 },
+        "status": { "type": "string", "enum": ["active", "on_leave"] }
+      },
+      "required": ["id", "name", "role", "roleType", "monthlySalary", "status"]
+    },
+    "AppUser": {
+      "title": "AppUser",
+      "description": "Registered LedgerLite user profile and business account",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "uid": { "type": "string", "maxLength": 128 },
+        "fullName": { "type": "string", "maxLength": 150 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "businessName": { "type": "string", "maxLength": 200 },
+        "businessType": { "type": "string", "enum": ["school", "shop", "services", "general"] },
+        "location": { "type": "string", "maxLength": 200 },
+        "currency": { "type": "string", "maxLength": 10 },
+        "role": { "type": "string", "enum": ["owner", "manager", "cashier", "viewer", "admin"] },
+        "authProvider": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "number" },
+        "lastLoginAt": { "type": "number" }
+      },
+      "required": ["id", "fullName", "role", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/AppUser" },
+      "description": "Collection of all registered LedgerLite users"
+    },
+    "/transactions/{transactionId}": {
+      "schema": { "$ref": "#/entities/Transaction" },
+      "description": "Collection of all financial transaction entries"
+    },
+    "/invoices/{invoiceId}": {
+      "schema": { "$ref": "#/entities/Invoice" },
+      "description": "Collection of issued invoices and balances due"
+    },
+    "/issued_receipts/{receiptId}": {
+      "schema": { "$ref": "#/entities/IssuedReceipt" },
+      "description": "Collection of generated customer receipts"
+    },
+    "/business_profiles/{profileId}": {
+      "schema": { "$ref": "#/entities/BusinessProfile" },
+      "description": "Collection of user business profiles"
+    },
+    "/staff/{staffId}": {
+      "schema": { "$ref": "#/entities/StaffMember" },
+      "description": "Collection of staff and teacher records"
+    }
+  }
+}

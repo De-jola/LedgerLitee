@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488" />
+      <stop offset="50%" stop-color="#0f766e" />
+      <stop offset="100%" stop-color="#115e59" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+  </defs>
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="112" fill="url(#brandGrad)" />
+  <!-- Inner card/ledger frame -->
+  <rect x="72" y="72" width="368" height="368" rx="40" fill="#ffffff" fill-opacity="0.1" stroke="#ffffff" stroke-opacity="0.25" stroke-width="6" />
+  
+  <!-- School Roof / Cap & Financial Growth Symbol -->
+  <path d="M256 120 L380 180 L256 240 L132 180 Z" fill="url(#goldGrad)" />
+  <path d="M256 240 L380 180 V220 L256 280 L132 220 V180 Z" fill="#d97706" opacity="0.6" />
+  
+  <!-- Receipt / Barcode Lines -->
+  <g fill="#ffffff" transform="translate(146, 270)">
+    <rect x="0" y="0" width="16" height="70" rx="3" />
+    <rect x="26" y="0" width="8" height="70" rx="2" />
+    <rect x="44" y="0" width="22" height="70" rx="3" />
+    <rect x="76" y="0" width="10" height="70" rx="2" />
+    <rect x="96" y="0" width="18" height="70" rx="3" />
+    <rect x="124" y="0" width="8" height="70" rx="2" />
+    <rect x="142" y="0" width="26" height="70" rx="3" />
+    <rect x="178" y="0" width="12" height="70" rx="2" />
+    <rect x="200" y="0" width="20" height="70" rx="3" />
+  </g>
+
+  <!-- Glowing Scanner Laser Beam -->
+  <line x1="120" y1="305" x2="392" y2="305" stroke="#34d399" stroke-width="6" stroke-linecap="round" filter="drop-shadow(0 0 8px #34d399)" />
+
+  <!-- Cash Flow Arrows -->
+  <circle cx="256" cy="385" r="32" fill="#10b981" />
+  <path d="M246 385 L266 385 M256 375 L266 385 L256 395" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

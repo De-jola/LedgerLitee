@@ -1,0 +1,10 @@
+{
+  "name": "LedgerLite - Your business records, safely in one place",
+  "description": "Record daily sales and expenses, scan paper receipts, create invoices, and manage staff from your phone or computer. No more searching through notebooks to know how your business is doing.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
