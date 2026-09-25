@@ -49,6 +49,7 @@ import {
   Receipt,
   ShieldAlert,
 } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   // Main Data States
@@ -984,6 +985,9 @@ export default function App() {
         }
         onRestoreBackup={handleRestoreBackup}
       />
+
+      {/* Vercel Web Analytics */}
+      <Analytics />
     </div>
   );
 }
