@@ -51,11 +51,11 @@ export const TransactionFormModal: React.FC<TransactionFormModalProps> = ({
   profile,
   editTransaction,
 }) => {
+  const [type, setType] = useState<TransactionType>(initialType);
   const copy = getBusinessCopy(profile);
   const categoryOptions = getCategoryOptions(profile, type);
   const defaultIncomeCategory = getCategoryOptions(profile, 'income')[0].value;
   const defaultExpenseCategory = getCategoryOptions(profile, 'expense')[0].value;
-  const [type, setType] = useState<TransactionType>(initialType);
   const [amount, setAmount] = useState<string>('');
   const [title, setTitle] = useState<string>('');
   const [category, setCategory] = useState<string>('tuition_fees');
